@@ -1,5 +1,3 @@
-customtkinter
 pillow
-pyinstaller
+nuitka
 pywin32; sys_platform == 'win32'
-reportlab

@@ -21,9 +21,9 @@ def get_external_dir():
 
 
 def get_bundle_dir():
-    """Directory for read-only bundled files (font, icon) — sys._MEIPASS when frozen."""
+    """Directory for read-only bundled files (font, icon) — next to the exe when frozen."""
     if getattr(sys, 'frozen', False):
-        return sys._MEIPASS  # type: ignore[attr-defined]
+        return path.dirname(sys.executable)
     return path.join(basedir, '..')
 
 

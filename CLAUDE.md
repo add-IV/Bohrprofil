@@ -16,10 +16,10 @@ python app.py
 pip install -r requirements.txt
 
 # Build Windows executable
-pyinstaller app.spec
+python build.py
 ```
 
-The PyInstaller spec bundles `mu.ico`, `DejaVuSans.ttf`, `patterns/`, and `config.ini` into the dist folder automatically.
+`build.py` uses Nuitka to compile the app and copies `patterns/` and `config.ini` next to the exe in `dist/app.dist/`.
 
 ## Architecture
 
@@ -36,7 +36,7 @@ The PyInstaller spec bundles `mu.ico`, `DejaVuSans.ttf`, `patterns/`, and `confi
 - `src/config.py` — Reads `config.ini` and exposes layout constants (spacing, colors, fonts). All dimensions are in cm, converted to pixels via `PIXEL_PER_CM = 118.11` (300 DPI).
 - `src/utils.py` — DPI/pixel helpers, path resolution for both dev and frozen (PyInstaller) environments.
 
-**Path handling:** The app uses `utils.get_external_dir()` and `utils.get_bundled_dir()` to find assets. When frozen by PyInstaller, `sys._MEIPASS` points to bundled files; otherwise the project root is used. When writing user-modifiable files (config, patterns), always use `get_external_dir()`.
+**Path handling:** The app uses `utils.get_external_dir()` and `utils.get_bundle_dir()` to find assets. When frozen by Nuitka, both return `path.dirname(sys.executable)` (all files are flat next to the exe); otherwise the project root is used. When writing user-modifiable files (config, patterns), always use `get_external_dir()`.
 
 **Configuration:** `config.ini` controls all visual layout parameters. The `[Abstände und Längen]` section defines spacing/dimensions in cm, `[Farben]` colors, `[Schriften]` font paths and sizes. Changing these affects the rendered output without code changes.
 

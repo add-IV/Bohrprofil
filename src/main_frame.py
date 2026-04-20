@@ -15,10 +15,6 @@ import tempfile
 import io
 
 
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.utils import ImageReader
-
 from .layer_list import LayerList
 
 from .draw import BohrprofilDrawer
@@ -26,6 +22,50 @@ from .bohrprofil import Bohrprofil, Layer
 from .utils import get_pixels_per_cm
 from .config_frame import ConfigFrame
 from .config import Config
+
+
+def _image_to_pdf(image, filename):
+    jpeg_buf = io.BytesIO()
+    image.convert("RGB").save(jpeg_buf, format="JPEG", quality=95)
+    jpeg_bytes = jpeg_buf.getvalue()
+
+    w_pt = image.width * 72 / 300
+    h_pt = image.height * 72 / 300
+    margin = 40
+    pw, ph = 595.28, 841.89
+
+    content = f"q {w_pt:.2f} 0 0 {h_pt:.2f} {margin:.2f} {ph - h_pt - margin:.2f} cm /Im0 Do Q".encode()
+
+    objs = {
+        1: (b"<</Type /XObject /Subtype /Image"
+            b" /Width " + str(image.width).encode() +
+            b" /Height " + str(image.height).encode() +
+            b" /ColorSpace /DeviceRGB /BitsPerComponent 8"
+            b" /Filter /DCTDecode"
+            b" /Length " + str(len(jpeg_bytes)).encode() +
+            b">>\nstream\n" + jpeg_bytes + b"\nendstream"),
+        2: b"<</Length " + str(len(content)).encode() + b">>\nstream\n" + content + b"\nendstream",
+        3: f"<</Type /Page /Parent 4 0 R /MediaBox [0 0 {pw} {ph}] /Contents 2 0 R /Resources <</XObject <</Im0 1 0 R>>>>>>".encode(),
+        4: b"<</Type /Pages /Kids [3 0 R] /Count 1>>",
+        5: b"<</Type /Catalog /Pages 4 0 R>>",
+    }
+
+    out = io.BytesIO()
+    out.write(b"%PDF-1.4\n")
+    offsets = {}
+    for n, data in objs.items():
+        offsets[n] = out.tell()
+        out.write(f"{n} 0 obj\n".encode() + data + b"\nendobj\n")
+
+    xref_pos = out.tell()
+    out.write(b"xref\n0 " + str(len(objs) + 1).encode() + b"\n")
+    out.write(b"0000000000 65535 f \n")
+    for n in range(1, len(objs) + 1):
+        out.write(f"{offsets[n]:010d} 00000 n \n".encode())
+    out.write(f"trailer\n<</Size {len(objs) + 1} /Root 5 0 R>>\nstartxref\n{xref_pos}\n%%EOF\n".encode())
+
+    with open(filename, "wb") as f:
+        f.write(out.getvalue())
 
 
 class MainFrame(ttk.Frame):
@@ -142,23 +182,7 @@ class MainFrame(ttk.Frame):
         if not filename.endswith(".pdf"):
             self.image.save(filename)
         else:
-            image_data = io.BytesIO()
-            self.image.save(image_data, format="png")
-            image_data.seek(0)
-
-            # create a A4 pdf with reportlab
-
-            image_height = self.image.height
-            image_width = self.image.width
-            scale = 300.0
-            image_height = image_height * 72 / scale
-            image_width = image_width * 72 / scale
-
-            c = canvas.Canvas(filename, pagesize=A4)
-            image_out = ImageReader(image_data)
-            c.drawImage(image_out, 40, A4[1] - image_height - 40, width=image_width, height=image_height)
-            c.showPage()
-            c.save()
+            _image_to_pdf(self.image, filename)
 
 
     def create_menubar(self, root):

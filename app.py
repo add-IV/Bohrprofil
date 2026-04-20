@@ -26,6 +26,9 @@ root.rowconfigure(0, weight=1)
 main_frame = MainFrame(root)
 
 if sys.platform == "win32":
-    root.iconbitmap(path.join(get_bundle_dir(), "mu.ico"))
+    if getattr(sys, 'frozen', False):
+        root.iconbitmap(sys.executable)
+    else:
+        root.iconbitmap(path.join(get_bundle_dir(), "mu.ico"))
 
 root.mainloop()
