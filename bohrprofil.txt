@@ -1,1 +1,0 @@
-{"title": "Bohrprofil", "height": "375", "max_depth": 1.0, "layers": [{"end_depth": 1.0, "texture": "Asphalt", "description": "Beschreibung 1\n"}]}

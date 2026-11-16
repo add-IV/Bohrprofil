@@ -1,0 +1,37 @@
+{
+  "title": "Bohrung B1",
+  "height": 412.5,
+  "max_depth": 6.0,
+  "layers": [
+    {
+      "end_depth": 0.3,
+      "texture": "Humus",
+      "description": "Oberboden, humos,\ndunkelbraun"
+    },
+    {
+      "end_depth": 1.4,
+      "texture": "Lehm sandig",
+      "description": "Lehm, sandig,\nsteif, braun"
+    },
+    {
+      "end_depth": 2.6,
+      "texture": "Kies sandig",
+      "description": "Kies, sandig,\nmitteldicht gelagert,\ngraubraun"
+    },
+    {
+      "end_depth": 3.8,
+      "texture": "Schluff steif",
+      "description": "Schluff, tonig,\nsteif, grau"
+    },
+    {
+      "end_depth": 5.0,
+      "texture": "Mergel",
+      "description": "Mergel, halbfest,\nhellgrau"
+    },
+    {
+      "end_depth": 6.0,
+      "texture": "Kalkstein",
+      "description": "Kalkstein, klüftig,\nverwittert"
+    }
+  ]
+}

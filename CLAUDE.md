@@ -42,4 +42,4 @@ python build.py
 
 ## No test suite
 
-There are no automated tests. Verify changes by running the app and checking the canvas render and export output. `bohrprofil.json` can be used as sample data via File → Open.
+There are no automated tests. Verify changes by running the app and checking the canvas render and export output. `examples/beispiel.json` can be used as sample data via File → Open.

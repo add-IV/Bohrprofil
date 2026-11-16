@@ -1,5 +1,7 @@
-.vscode
-CLAUDE.md
+# Editor / local artifacts
+.vscode/
+installer/
+*.xcf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
