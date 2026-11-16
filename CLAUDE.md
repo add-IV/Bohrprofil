@@ -21,6 +21,8 @@ python build.py
 
 `build.py` uses Nuitka to compile the app and copies `patterns/` and `config.ini` next to the exe in `dist/app.dist/`.
 
+Releases: pushing a `v*` tag runs `.github/workflows/release.yml`, which builds on `windows-latest` and attaches `Bohrprofil-windows.zip` to a GitHub Release. Running the workflow manually (workflow_dispatch) only uploads the zip as a build artifact.
+
 ## Architecture
 
 **Data flow:**

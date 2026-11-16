@@ -7,6 +7,7 @@ import sys
 subprocess.run([
     sys.executable, "-m", "nuitka",
     "--standalone",
+    "--assume-yes-for-downloads",  # non-interactive (CI): fetch dependency tools without prompting
     "--windows-console-mode=disable",
     "--windows-icon-from-ico=mu.ico",
     "--enable-plugin=tk-inter",
