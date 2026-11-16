@@ -44,6 +44,12 @@ python build.py
 
 **Configuration:** `config.ini` controls all visual layout parameters. The `[Abstände und Längen]` section defines spacing/dimensions in cm, `[Farben]` colors, `[Schriften]` font paths and sizes. Changing these affects the rendered output without code changes.
 
-## No test suite
+## Tests
 
-There are no automated tests. Verify changes by running the app and checking the canvas render and export output. `examples/beispiel.json` can be used as sample data via File → Open.
+```bash
+pip install -r requirements-dev.txt
+pytest          # tests/ — model, config, headless rendering, PDF export
+ruff check .
+```
+
+CI (`.github/workflows/ci.yml`) runs both on Ubuntu and Windows. The GUI itself has no automated tests — verify UI changes by running the app. `examples/beispiel.json` can be used as sample data via File → Open.

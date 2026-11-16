@@ -1,0 +1,4 @@
+# Runtime deps needed for tests (no Nuitka / pywin32) + dev tools
+pillow==12.1.1
+pytest==9.2.0
+ruff==0.17.5
