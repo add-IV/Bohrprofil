@@ -1,17 +1,25 @@
+"""Layout configuration backed by ``config.ini``.
+
+Values ending in ``cm`` are converted to pixels; other integers are returned
+as ``int`` and everything else as ``str``. The ``x1()``..``x8()`` helpers give
+the cumulative horizontal positions of the profile's columns (see
+``docs/layout.png``).
+"""
+
 from configparser import ConfigParser
 from os import path
 
-from .utils import get_pixels_per_cm, get_external_dir
+from .utils import get_external_dir, get_pixels_per_cm
 
 
 class Config:
-    def __init__(self):
+    def __init__(self, filename: str | None = None):
         self.parser = ConfigParser()
-        self.parser.optionxform = str
+        self.parser.optionxform = str  # keep key case
         self.read_default_config()
-        self.read_file(path.join(get_external_dir(), "config.ini"))
+        self.read_file(filename or path.join(get_external_dir(), "config.ini"))
 
-    def get(self, section, key):
+    def get(self, section: str, key: str) -> int | str:
         value = self.parser.get(section, key)
         if value.endswith("cm"):
             return int(get_pixels_per_cm(float(value[:-2])))
@@ -19,11 +27,10 @@ class Config:
             return int(value)
         return value
 
-    def get_section(self, section):
+    def get_section(self, section: str):
         return self.parser[section]
 
-    def set(self, section, key, value):
-        print(f"Setting {section}: {key} to {value}")
+    def set(self, section: str, key: str, value: str) -> None:
         if not self.parser.has_section(section):
             self.parser.add_section(section)
         self.parser.set(section, key, value)
@@ -64,10 +71,10 @@ class Config:
     def x8(self):
         return self.x7() + self.get("Abstände und Längen", "Rechts Abstand")
 
-    def read_file(self, filename):
+    def read_file(self, filename: str) -> None:
         self.parser.read(filename, encoding="utf-8")
 
-    def write_file(self, filename):
+    def write_file(self, filename: str) -> None:
         with open(filename, "w", encoding="utf-8") as file:
             self.parser.write(file)
 
@@ -113,12 +120,9 @@ class Config:
             Beschreibung Y Abstand = 5
             Meereshöhe X Abstand = 5
             Meereshöhe Y Abstand = -5
-            
+
             [Linien]
             Maßstab Linienstärke = 3
             Profil Linienstärke = 1
             """
         )
-
-
-config = Config()

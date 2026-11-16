@@ -1,6 +1,9 @@
-from tkinter import Toplevel, Label
-from PIL import Image, ImageTk
+"""Hover preview of texture patterns inside a ttk.Combobox dropdown."""
+
 from os import path
+from tkinter import Label, Toplevel
+
+from PIL import Image, ImageTk
 
 # 2×3 tiles of the standard 104×48 pattern images
 _PREVIEW_W = 104

@@ -1,0 +1,6 @@
+line-length = 100
+target-version = "py312"
+extend-exclude = ["dist", "build"]
+
+[lint]
+select = ["E", "F", "W", "I", "UP", "B"]

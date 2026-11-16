@@ -1,8 +1,8 @@
-import subprocess
-import shutil
-import sys
-import os
 import glob
+import os
+import shutil
+import subprocess
+import sys
 
 subprocess.run([
     sys.executable, "-m", "nuitka",

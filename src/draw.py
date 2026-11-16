@@ -1,19 +1,26 @@
-from tkinter import *
-from PIL import Image, ImageDraw, ImageFont
+"""Renders a Bohrprofil to a 300-DPI PIL image (independent of the GUI)."""
+
 from os import path
+
+from PIL import Image, ImageDraw, ImageFont
 
 from .bohrprofil import Bohrprofil, Layer
 from .config import Config
+from .utils import get_bundle_dir, get_external_dir, get_pixels_per_cm
 
-from .utils import get_pixels_per_cm, get_external_dir, get_bundle_dir
 
-
-def _get_bounds_xy(draw: ImageDraw, font: ImageFont, text: str) -> tuple[int, int]:
+def _get_bounds_xy(
+    draw: ImageDraw.ImageDraw, font: ImageFont.FreeTypeFont, text: str
+) -> tuple[int, int]:
     bbox = draw.multiline_textbbox((0, 0), text, font=font)
     return bbox[2] + bbox[0], bbox[3] + bbox[1]
 
 
 class BohrprofilDrawer:
+    """Draws scale, texture column, depth markers, descriptions and title.
+
+    Layout positions come from :class:`Config`; see ``docs/layout.png``.
+    """
 
     def _create_scale(self, max_depth: float):
         for i in range(int(max_depth) + 1):
@@ -40,7 +47,7 @@ class BohrprofilDrawer:
             width = self.config.get("Linien", "Maßstab Linienstärke")
             self.draw.line((start_x, y, endx, y), fill=self.line_color, width=width)
 
-    def _custom_resize(self, img: Image, height: int) -> Image:
+    def _custom_resize(self, img: Image.Image, height: int) -> Image.Image:
         # repeats the image until the height is reached
         img_height = img.height
         img_width = img.width
@@ -138,7 +145,7 @@ class BohrprofilDrawer:
         description_lines = []
         size = self.config.get("Schriften", "Beschreibung Schriftgröße")
         font = self.draw.getfont().font_variant(size=size)
-        current_y = get_pixels_per_cm(1)
+        current_y = self.config.y1()
         y_border = self.config.get("Schriften Abstände", "Beschreibung Y Abstand")
         for layer in layers:
             current_y += y_border
@@ -189,7 +196,7 @@ class BohrprofilDrawer:
             1,
         )
 
-    def draw_profile(self, bp: Bohrprofil, config: Config) -> Image:
+    def draw_profile(self, bp: Bohrprofil, config: Config) -> Image.Image:
         self.config = config
         self.background_color = config.get_section("Farben")["Hintergrundfarbe"]
         self.line_color = config.get_section("Farben")["Linienfarbe"]
@@ -206,11 +213,3 @@ class BohrprofilDrawer:
         self._create_switch_lines(bp.layers, description_lines)
         self._create_height(bp.height)
         return self.image
-
-
-if __name__ == "__main__":
-    with open("bohrprofil.txt", "r") as file:
-        bp = Bohrprofil.unmarshal(eval(file.read()))
-    drawer = BohrprofilDrawer()
-    img = drawer.draw_profile(bp)
-    img.save("bohrprofil.png")

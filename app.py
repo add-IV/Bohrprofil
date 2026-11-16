@@ -1,34 +1,39 @@
-from tkinter import *
-from tkinter import ttk
-from os import path
+"""Entry point for the Bohrprofil desktop application."""
+
 import sys
+import tkinter as tk
+from os import path
+
 from src.main_frame import MainFrame
 from src.utils import get_bundle_dir
 
-if sys.platform == "win32":
-    from ctypes import windll
-
-    myappid = "addiv.bohrprofil.1.0"
-    windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+APP_USER_MODEL_ID = "addiv.bohrprofil.1.0"
 
 
-layers = []
+def main() -> None:
+    if sys.platform == "win32":
+        # Give the app its own taskbar identity/icon instead of python.exe's.
+        from ctypes import windll
 
-root = Tk()
-root.title("Bohrprofil")
-root.minsize(1600, 800)
-root.geometry("1600x800")
+        windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_USER_MODEL_ID)
 
-root.columnconfigure(0, weight=1)
-root.rowconfigure(0, weight=1)
+    root = tk.Tk()
+    root.title("Bohrprofil")
+    root.minsize(1600, 800)
+    root.geometry("1600x800")
+    root.columnconfigure(0, weight=1)
+    root.rowconfigure(0, weight=1)
 
-# Create a main frame
-main_frame = MainFrame(root)
+    MainFrame(root)
 
-if sys.platform == "win32":
-    if getattr(sys, 'frozen', False):
-        root.iconbitmap(sys.executable)
-    else:
-        root.iconbitmap(path.join(get_bundle_dir(), "mu.ico"))
+    if sys.platform == "win32":
+        if getattr(sys, "frozen", False):
+            root.iconbitmap(sys.executable)
+        else:
+            root.iconbitmap(path.join(get_bundle_dir(), "mu.ico"))
 
-root.mainloop()
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
